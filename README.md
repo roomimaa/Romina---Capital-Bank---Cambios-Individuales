@@ -85,6 +85,32 @@ pytest --cov=src -v
 Bash
 # Interfaz gráfica principal (Flet)
 python main.py
+
+## 🐳 Ejecución con Docker
+
+El proyecto incluye `Dockerfile` y `docker-compose.yml`. La aplicación se ejecuta como servidor web de Flet en `http://localhost:8550`, montando el código y la base SQLite para que los datos persistan en el host.
+
+```bash
+# Construir y levantar el servicio
+docker compose up --build -d
+
+# Ver estado y logs
+docker compose ps
+docker compose logs -f
+
+# Detener el servicio
+docker compose down
+```
+
+Variables de entorno configurables (definidas en `docker-compose.yml`):
+
+| Variable | Valor por defecto | Descripción |
+| --- | --- | --- |
+| `DB_PATH` | `/app/sistema_bancario.db` | Ruta del archivo SQLite dentro del contenedor |
+| `FLET_SERVER_IP` | `0.0.0.0` | Host donde escucha el servidor web |
+| `FLET_SERVER_PORT` | `8550` | Puerto del servidor web |
+| `FLET_FORCE_WEB_SERVER` | `true` | Fuerza el modo servidor web (sin abrir navegador) |
+
 ⚙️ Integración Continua (CI/CD)
 El repositorio cuenta con un workflow de GitHub Actions configurado en .github/workflows/ci.yml. En cada push a cualquier rama o apertura de Pull Request, el servidor de CI:
 1.	Configura el entorno Python aislado.
