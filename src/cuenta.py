@@ -38,17 +38,33 @@ class Cuenta:
         self.__transacciones = []
 
     @classmethod
-    def from_db_row(cls, row, cliente):
-        """Crea una instancia de Cuenta a partir de la fila de la tabla cuenta."""
+    def from_dict(cls, datos, cliente):
+        """Crea una cuenta a partir de un diccionario con nombres explícitos."""
         return cls(
-            nro_cuenta=row[1],
+            nro_cuenta=datos["nro_cuenta"],
             cliente=cliente,
-            saldo=row[4],
-            id_cuenta=row[0],
-            id_cliente=row[2],
-            id_tipo_cuenta=row[3],
-            tasa_interes=row[5] or 0.0,
-            fecha_creacion=row[6],
+            saldo=datos["saldo"],
+            id_cuenta=datos["id_cuenta"],
+            id_cliente=datos["id_cliente"],
+            id_tipo_cuenta=datos["id_tipo_cuenta"],
+            tasa_interes=datos.get("tasa_interes") or 0.0,
+            fecha_creacion=datos.get("fecha_creacion"),
+        )
+
+    @classmethod
+    def from_db_row(cls, row, cliente):
+        """Compatibilidad con el formato de tupla histórica del DAO."""
+        return cls.from_dict(
+            {
+                "id_cuenta": row[0],
+                "nro_cuenta": row[1],
+                "id_cliente": row[2],
+                "id_tipo_cuenta": row[3],
+                "saldo": row[4],
+                "tasa_interes": row[5],
+                "fecha_creacion": row[6],
+            },
+            cliente,
         )
 
     # Métodos getters

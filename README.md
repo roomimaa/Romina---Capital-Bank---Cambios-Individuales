@@ -19,9 +19,19 @@ Proyecto integrador para las asignaturas **Refactoring y Testing** e **Integraci
 * **Integración Continua (CI/CD):** Pipeline automatizado con **GitHub Actions** que ejecuta la suite de pruebas tras cada `push` y `Pull Request`.
 
 ## 🏛️ Arquitectura y Principios SOLID
-1. **Single Responsibility Principle (SRP):** Desacoplamiento total entre la Lógica de Negocio (`src/cliente.py`, `src/cuenta.py`, etc.), la Persistencia (`src/dao.py`, `src/models.py`) y la Presentación (`app_banco.py`).
+
+El proyecto está organizado en **MVC en capas** (detalle completo en
+[`ARQUITECTURA_MVC.md`](ARQUITECTURA_MVC.md)):
+
+```
+Vista (Flet) -> Controlador -> Modelo (servicios) -> Repositorio (DAO) -> SQLite
+```
+
+1. **Single Responsibility Principle (SRP):** la Lógica de Negocio vive en `src/models/entities.py` y `src/models/services/`; la Persistencia en `src/models/repositories.py` (único lugar con SQL); la Presentación en `src/views/`; y la coordinación en `src/controllers/`.
 2. **Liskov Substitution Principle (LSP):** La clase `CuentaAhorro` extiende de `Cuenta` respetando estrictamente los contratos y comportamiento de la clase base.
-3. **Inversión de Dependencias & DAO:** Uso de `DAO(":memory:")` para aislar completamente las pruebas de integración sin afectar la base de datos de producción.
+3. **Inversión de Dependencias & DAO:** Los servicios dependen de la abstracción del repositorio y usan `DAO(":memory:")` para aislar las pruebas de integración sin afectar la base de datos de producción.
+4. **Vistas "tontas":** `src/views/` no importa el modelo ni ejecuta SQL; recibe DTOs (`src/views/view_models.py`) y notifica eventos al controlador por callbacks.
+5. **Controladores mediadores:** `src/controllers/` intercepta eventos, maneja errores con `try/except` y actualiza la UI de forma reactiva.
 
 ## 🧪 Pruebas Automatizadas (`pytest`)
 
